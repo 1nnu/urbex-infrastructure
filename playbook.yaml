@@ -1,0 +1,9 @@
+---
+- name: "Configure servers"
+  hosts: all
+  remote_user: root
+  tasks:
+  - name: "Create test file"
+    ansible.builtin.file:
+      path: /root/testfile
+      state: touch
