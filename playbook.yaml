@@ -1,9 +1,14 @@
 ---
-- name: "Configure servers"
+- name: Initial setup
   hosts: all
   remote_user: root
-  tasks:
-  - name: "Create test file"
-    ansible.builtin.file:
-      path: /root/testfile
-      state: touch
+  roles:
+    - init
+  tags: init
+
+- name: Setup control-plane node
+  hosts: control_plane
+  remote_user: root
+  roles:
+    - control-node
+  tags: control

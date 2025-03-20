@@ -1,2 +1,9 @@
 plugin: hetzner.hcloud.hcloud
 api_token: "{{ api_token }}"
+keyed_groups:
+  - key: name
+    prefix: control-
+    parent_group: control_plane
+  - key: name
+    prefix: worker-
+    parent_group: worker

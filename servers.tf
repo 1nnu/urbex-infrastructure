@@ -9,7 +9,7 @@ resource "hcloud_primary_ip" "main" {
 
 # Create main node running Ubuntu
 resource "hcloud_server" "main" {
-  name        = "node1"
+  name        = "control-node"
   image       = var.os_type
   server_type = var.server_type
   location    = var.location

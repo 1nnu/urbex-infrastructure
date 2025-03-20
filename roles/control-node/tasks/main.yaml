@@ -1,0 +1,5 @@
+---
+  - name: Run command to add Kubernetes apt repo
+    ansible.builtin.command:
+      cmd: kubeadm init
+      creates: /etc/apt/sources.list.d/kubernetes.list
