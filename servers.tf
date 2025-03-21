@@ -14,6 +14,9 @@ resource "hcloud_server" "main" {
   server_type = var.server_type
   location    = var.location
   ssh_keys    = [hcloud_ssh_key.main.id]
+  labels  	  = {
+    "node_type" : "control"
+  }
   public_net {
     ipv4_enabled = true
     ipv4 = hcloud_primary_ip.main.id

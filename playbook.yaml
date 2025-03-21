@@ -7,8 +7,15 @@
   tags: init
 
 - name: Setup control-plane node
-  hosts: control_plane
+  hosts: _node_type_control
   remote_user: root
   roles:
     - control-node
   tags: control
+
+- name: Setup worker node(s)
+  hosts: _node_type_worker
+  remote_user: root
+  roles:
+    - worker-node
+  tags: worker

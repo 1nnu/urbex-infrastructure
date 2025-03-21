@@ -1,0 +1,22 @@
+---
+  - name: Template worker.sh script to worker node
+    ansible.builtin.template:
+      src: worker.sh.j2
+      dest: /root/worker.sh
+      owner: root
+      group: root
+      mode: '0700'
+
+  - name: Run worker.sh on first start
+    ansible.builtin.command:
+      cmd: bash /root/worker.sh
+      creates: /usr/bin/kubeadm
+
+  - name: Copy worker join command to host
+    ansible.builtin.copy:
+      src: /tmp/join-command.sh
+      dest: /root/join-command.sh
+  
+  - name: Run join-command.sh to join cluster
+    ansible.builtin.command:
+      cmd: bash /root/join-command.sh

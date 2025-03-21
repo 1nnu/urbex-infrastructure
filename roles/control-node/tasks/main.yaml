@@ -11,3 +11,14 @@
     ansible.builtin.command:
       cmd: bash /root/master.sh
       creates: /usr/bin/kubeadm
+  
+  - name: Store file for worker to join
+    ansible.builtin.fetch:
+      src: /root/join-command.sh
+      dest: /tmp/join-command.sh/
+      flat: true
+  
+  #- name: Remove taint from master_node
+  #  kubernetes.core.k8s:
+  #    state: patched
+  #    kind: 
