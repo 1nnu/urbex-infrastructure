@@ -10,4 +10,4 @@
   - name: Run master.sh on first start
     ansible.builtin.command:
       cmd: bash /root/master.sh
-      creates: /usr/local/sbin/runc
+      creates: /usr/bin/kubeadm

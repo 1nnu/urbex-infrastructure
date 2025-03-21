@@ -1,4 +1,4 @@
-# Create primary ip for server access
+# Create primary ip for control node access
 resource "hcloud_primary_ip" "main" {
   name          = "primary_ip"
   datacenter    = var.datacenter
@@ -7,7 +7,7 @@ resource "hcloud_primary_ip" "main" {
   auto_delete   = false
 }
 
-# Create main node running Ubuntu
+# Create control node running Ubuntu
 resource "hcloud_server" "main" {
   name        = "control-node"
   image       = var.os_type
