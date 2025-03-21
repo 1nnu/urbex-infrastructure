@@ -17,8 +17,37 @@
       src: /root/join-command.sh
       dest: /tmp/join-command.sh/
       flat: true
+
+# Allowed hosting of pods on control plane node for development and cost saving
+  - name: Install Kubernetes Python dependencies using apt
+    apt:
+      name:
+        - python3-openshift
+        - python3-yaml
+        - python3-kubernetes
+      state: present
+
+# Allowed hosting of pods on control plane node for development and cost saving
+  - name: Remove taint from control-node
+    kubernetes.core.k8s:
+      state: patched
+      kind: Node
+      name: "{{ inventory_hostname }}"
+      definition:
+        spec:
+          taints: []
   
-  #- name: Remove taint from master_node
-  #  kubernetes.core.k8s:
-  #    state: patched
-  #    kind: 
+  - name: Get project root directory
+    set_fact:
+      project_root: "{{ lookup('pipe', 'pwd') }}"
+
+  - name: Copy k8s manifests to control-plane node
+    ansible.builtin.copy:
+      src: "{{ project_root }}/k8s/"
+      dest: "/root/k8s"
+      mode: '0700'
+
+  - name: Apply Kustomization on the control-plane node
+    ansible.builtin.command:
+      cmd: kubectl apply -k /root/k8s/base/
+
