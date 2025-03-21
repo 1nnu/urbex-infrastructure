@@ -19,3 +19,10 @@
   roles:
     - worker-node
   tags: worker
+
+- name: Deployment
+  hosts: _node_type_control
+  remote_user: root
+  roles:
+    - webapp-deployment
+  tags: control

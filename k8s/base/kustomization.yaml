@@ -3,7 +3,7 @@ kind: Kustomization
   
 resources:
   - backend/
-#  - frontend/
+  - frontend/
 #  - database/
 
 namespace: web-app

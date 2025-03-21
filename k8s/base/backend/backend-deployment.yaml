@@ -1,3 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: java-spring-config
+  namespace: web-app
+data:
+  application.properties:
+
+---
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -15,7 +25,15 @@ spec:
         app: backend
     spec:
       containers:
-      - name: java-spring
-        image: tiim32/iti0302-2024:latest
-        ports:
-        - containerPort: 8080
+        - name: java-spring
+          image: tiim32/iti0302-2024:latest
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: config-volume
+              mountPath: /app/application.properties
+              subPath: application.properties
+      volumes:
+        - name: config-volume
+          configMap:
+            name: java-spring-config

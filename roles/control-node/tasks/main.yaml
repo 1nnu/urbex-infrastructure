@@ -37,17 +37,4 @@
         spec:
           taints: []
   
-  - name: Get project root directory
-    set_fact:
-      project_root: "{{ lookup('pipe', 'pwd') }}"
-
-  - name: Copy k8s manifests to control-plane node
-    ansible.builtin.copy:
-      src: "{{ project_root }}/k8s/"
-      dest: "/root/k8s"
-      mode: '0700'
-
-  - name: Apply Kustomization on the control-plane node
-    ansible.builtin.command:
-      cmd: kubectl apply -k /root/k8s/base/
 
