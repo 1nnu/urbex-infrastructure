@@ -1,1 +1,21 @@
 kubernetes_signing_key: https://pkgs.k8s.io/core:/stable:/v1.32/deb/Release.key
+
+# Kubernetes prerequisites
+containerd_version: 2.0.4
+containerd_github_url: https://github.com/containerd/containerd/releases/download/v{{containerd_version}}/containerd-{{containerd_version}}-linux-amd64.tar.gz
+containerd_tar_file: containerd-{{containerd_version}}-linux-amd64.tar.gz
+containerd_service_url: https://raw.githubusercontent.com/containerd/containerd/main/containerd.service
+
+runc_version: v1.2.6
+runc_file: runc.amd64
+runc_github_url: https://github.com/opencontainers/runc/releases/download/{{runc_version}}/{{runc_file}}
+
+cni_version: v1.6.2
+cni_github_url: https://github.com/containernetworking/plugins/releases/download/{{cni_version}}/cni-plugins-linux-amd64-{{cni_version}}.tgz
+cni_file: cni-plugins-linux-amd64-{{cni_version}}.tgz
+
+circtl_version: v1.32.0
+crictl_github_url: https://github.com/kubernetes-sigs/cri-tools/releases/download/{{circtl_version}}/crictl-{{circtl_version}}-linux-amd64.tar.gz
+crictl_file: crictl-{{circtl_version}}-linux-amd64.tar.gz
+
+kubernetes_gpg_key: https://pkgs.k8s.io/core:/stable:/v1.32/deb/Release.key

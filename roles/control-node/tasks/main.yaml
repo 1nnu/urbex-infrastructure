@@ -1,5 +1,13 @@
 ---
-  - name: Run command to add Kubernetes apt repo
+  - name: Template master.sh script to control-plane node
+    ansible.builtin.template:
+      src: master.sh.j2
+      dest: /root/master.sh
+      owner: root
+      group: root
+      mode: '0700'
+
+  - name: Run master.sh on first start
     ansible.builtin.command:
-      cmd: kubeadm init
-      creates: /etc/apt/sources.list.d/kubernetes.list
+      cmd: bash /root/master.sh
+      creates: /usr/local/sbin/runc
