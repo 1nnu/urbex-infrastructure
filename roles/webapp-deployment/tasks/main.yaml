@@ -18,4 +18,5 @@
 
   - name: Apply Kustomization on the control-plane node
     ansible.builtin.command:
-      cmd: kubectl apply -k /root/k8s/base/
+      cmd: kubectl apply -k /root/k8s/overlays/{{ deployment_type }}
+    when: deployment_type in ['dev', 'prod']
