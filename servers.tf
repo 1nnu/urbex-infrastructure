@@ -14,12 +14,23 @@ resource "hcloud_server" "main" {
   server_type = var.server_type
   location    = var.location
   ssh_keys    = [hcloud_ssh_key.main.id]
+  firewall_ids = [hcloud_firewall.k8sfirewall.id]
   labels  	  = {
     "node_type" : "control"
   }
+
+  network {
+    network_id = hcloud_network.privateNetwork.id
+    ip         = "192.168.0.10"
+  }
+
   public_net {
     ipv4_enabled = true
     ipv4 = hcloud_primary_ip.main.id
     ipv6_enabled = false
   }
+
+  depends_on = [
+    hcloud_network_subnet.k8s
+  ]
 }

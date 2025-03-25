@@ -5,6 +5,7 @@ resources:
   - ../../base  # Use resources instead of bases
 
 namespace: web-app
+
 configMapGenerator:
   - name: java-spring-config
     files:

@@ -1,5 +1,6 @@
 deployment_type: "{{ lookup('env', 'DEPLOYMENT_TYPE') | default('', true) }}"
 
+
 # Kubernetes prerequisites
 containerd_version: 2.0.4
 containerd_github_url: https://github.com/containerd/containerd/releases/download/v{{containerd_version}}/containerd-{{containerd_version}}-linux-amd64.tar.gz
@@ -19,3 +20,7 @@ crictl_github_url: https://github.com/kubernetes-sigs/cri-tools/releases/downloa
 crictl_file: crictl-{{circtl_version}}-linux-amd64.tar.gz
 
 kubernetes_gpg_key: https://pkgs.k8s.io/core:/stable:/v1.32/deb/Release.key
+
+# Gateway API
+
+gateway_api_link: https://github.com/envoyproxy/gateway/releases/download/v1.2.7/install.yaml
