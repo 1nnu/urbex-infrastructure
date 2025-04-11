@@ -1,0 +1,48 @@
+application:
+  name: urbex
+  namespace: urbex
+
+backend:
+  image:
+    repository: tiim32/backend
+    tag: latest
+  replicas: 2
+  service:
+    enabled: true
+    type: NodePort
+    port: 80
+    nodePort: 30008
+
+frontend:
+  name: frontend
+  container:
+    name: frontend
+    port: 5173
+  image:
+    repository: tiim32/frontend
+    tag: latest
+  replicas: 2
+  env:
+    VITE_API_URL: "http://backend-service:8080"
+  labels:
+    app: frontend
+  service:
+    enabled: true
+    type: NodePort
+    port: 80
+    nodePort: 30007
+
+database:
+  enabled: true
+  image:
+    repository: postgres
+    tag: latest
+  name: postgres
+  user: postgres
+  password: postgres
+  database: urbex
+  port: 5432
+  service:
+    enabled: true
+    type: ClusterIP
+    port: 5432

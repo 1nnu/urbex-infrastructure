@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.frontend.name }}
+  namespace: {{ .Values.application.namespace }}
+  labels:
+    app: frontend
+spec:
+  replicas: {{ .Values.frontend.replicas }}
+  selector:
+    matchLabels:
+      {{- range $key, $value := .Values.frontend.labels }}
+        {{ $key }}: {{ $value }}
+      {{- end }}
+  template:
+    metadata:
+      labels:
+      {{- range $key, $value := .Values.frontend.labels }}
+        {{ $key }}: {{ $value }}
+      {{- end }}
+    spec:
+      containers:
+        - name: {{ .Values.frontend.container.name }}
+          image: {{ .Values.frontend.image.repositort }}:{{ .Values.frontend.image.tag }}
+          ports:
+            - containerPort: {{ .Values.frontend.container.port }}
+          env:
+            - name: REACT_APP_BACKEND_URL
+              value: {{ .Values.frontend.env.VITE_API_URL }}
