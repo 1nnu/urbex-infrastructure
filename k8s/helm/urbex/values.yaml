@@ -3,41 +3,54 @@ application:
   namespace: urbex
 
 backend:
+  name: backend
+  container:
+    name: java-spring
+    port: 8080
   image:
-    repository: tiim32/backend
+    repository: tiim32/iti0302-2024
     tag: latest
   replicas: 2
+  labels:
+    app: backend
   service:
-    enabled: true
+    name: backend-service
     type: NodePort
     port: 80
     nodePort: 30008
+  configMap:
+    name: java-spring-config
 
 frontend:
   name: frontend
   container:
-    name: frontend
+    name: react
     port: 5173
   image:
     repository: tiim32/frontend
     tag: latest
   replicas: 2
   env:
-    VITE_API_URL: "http://backend-service:8080"
+    VITE_API_URL: "http://backend-service:30008"
   labels:
     app: frontend
   service:
-    enabled: true
+    name: frontend-service
     type: NodePort
     port: 80
     nodePort: 30007
 
 database:
-  enabled: true
+  container:
+    name: postgres
+    port: 5432
   image:
     repository: postgres
     tag: latest
-  name: postgres
+  name: database
+  replicas: 1
+  labels:
+    app: frontend
   user: postgres
   password: postgres
   database: urbex
@@ -46,3 +59,5 @@ database:
     enabled: true
     type: ClusterIP
     port: 5432
+  configMap:
+    name: postgres-config

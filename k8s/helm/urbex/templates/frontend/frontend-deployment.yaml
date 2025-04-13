@@ -21,9 +21,9 @@ spec:
     spec:
       containers:
         - name: {{ .Values.frontend.container.name }}
-          image: {{ .Values.frontend.image.repositort }}:{{ .Values.frontend.image.tag }}
+          image: {{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}
           ports:
             - containerPort: {{ .Values.frontend.container.port }}
           env:
-            - name: REACT_APP_BACKEND_URL
+            - name: VITE_API_URL
               value: {{ .Values.frontend.env.VITE_API_URL }}

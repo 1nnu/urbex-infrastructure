@@ -16,7 +16,9 @@
       dest: "/root/k8s"
       mode: '0700'
 
-  - name: Apply Kustomization on the control-plane node
-    ansible.builtin.command:
-      cmd: kubectl apply -k /root/k8s/overlays/{{ deployment_type }}
-    when: deployment_type in ['dev', 'prod']
+  - name: Apply Urbex helm chart on the control-plane node
+    kubernetes.core.helm:
+      name: urbex
+      chart_ref: "/root/k8s/helm/urbex"
+      release_namespace: urbex
+      create_namespace: true

@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.backend.name }}
+  namespace: {{ .Values.application.namespace }}
+  labels:
+    app: backend
+spec:
+  replicas: {{ .Values.backend.replicas }}
+  selector:
+    matchLabels:
+      {{- range $key, $value := .Values.backend.labels }}
+        {{ $key }}: {{ $value }}
+      {{- end }}
+  template:
+    metadata:
+      labels:
+        {{- range $key, $value := .Values.backend.labels }}
+          {{ $key }}: {{ $value }}
+        {{- end }}
+    spec:
+      containers:
+        - name: {{ .Values.backend.container.name }}
+          image: {{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}
+          ports:
+            - containerPort: {{ .Values.backend.container.port }}
+          volumeMounts:
+            - name: {{ .Values.backend.configMap.name }}
+              mountPath: /app/config
+      volumes:
+        - name: {{ .Values.backend.configMap.name }}
+          configMap:
+            name: {{ .Values.backend.configMap.name }}
