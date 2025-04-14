@@ -49,14 +49,16 @@ database:
     tag: latest
   name: database
   replicas: 1
+  env:
+    POSTGRES_DB: devdb
+    POSTGRES_USER: devuser
+    POSTGRES_PASSWORD: devpassword
+    PGDATA: /var/lib/postgresql/data/pgdata
   labels:
-    app: frontend
-  user: postgres
-  password: postgres
-  database: urbex
+    app: postgres
   port: 5432
   service:
-    enabled: true
+    name: postgres-service
     type: ClusterIP
     port: 5432
   configMap:

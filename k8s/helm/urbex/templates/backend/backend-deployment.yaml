@@ -26,7 +26,8 @@ spec:
             - containerPort: {{ .Values.backend.container.port }}
           volumeMounts:
             - name: {{ .Values.backend.configMap.name }}
-              mountPath: /app/config
+              mountPath: /app/application.properties
+              subPath: application.properties
       volumes:
         - name: {{ .Values.backend.configMap.name }}
           configMap:
