@@ -1,10 +1,21 @@
 ---
+- name: Debug Info
+  hosts: all
+  remote_user: root
+  gather_facts: true
+  roles:
+    - role: debug
+      when: debug | default(false) | bool
+  tags: debug
+
+  
 - name: Initial setup
   hosts: all
   remote_user: root
   roles:
     - init
   tags: init
+  gather_facts: true
 
 - name: Setup control-plane node
   hosts: _node_type_control
@@ -26,3 +37,10 @@
   roles:
     - webapp-deployment
   tags: control
+
+- name: Setup load balancer node
+  hosts: _node_type_balancer
+  remote_user: root
+  roles:
+    - balancer-node
+  tags: balancer

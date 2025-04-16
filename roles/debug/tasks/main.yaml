@@ -1,0 +1,4 @@
+---
+- name: Print all gathered facts for this host
+  debug:
+    var: ansible_facts

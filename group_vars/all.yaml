@@ -24,3 +24,9 @@ kubernetes_gpg_key: https://pkgs.k8s.io/core:/stable:/v1.32/deb/Release.key
 # Gateway API
 
 gateway_api_link: https://github.com/envoyproxy/gateway/releases/download/v1.2.7/install.yaml
+
+# Load balancer specs
+
+k8s_frontend_nodeport: 30007
+k8s_backend_nodeport: 30008
+control_node_ip: "192.168.0.11"

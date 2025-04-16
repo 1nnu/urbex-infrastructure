@@ -14,23 +14,23 @@ resource "hcloud_firewall" "k8sfirewall" {
   rule {
     direction = "in"
     protocol  = "tcp"
-    port      = "30007"
+    port      = "80"
     source_ips = [
       "0.0.0.0/0",
       "::/0"
     ]
-    description = "Allow access to frontend from anywhere"
+    description = "Allow access to http from anywhere"
   }
 
   rule {
     direction = "in"
     protocol  = "tcp"
-    port      = "30008"
+    port      = "443"
     source_ips = [
       "0.0.0.0/0",
       "::/0"
     ]
-    description = "Allow access to backend from anywhere"
+    description = "Allow access to https from anywhere"
   }
 
 }

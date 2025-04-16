@@ -1,0 +1,28 @@
+global
+    log /dev/log    local0
+    log /dev/log    local1 notice
+    daemon
+    maxconn 2048
+
+defaults
+    log     global
+    option  dontlognull
+    timeout connect 10s
+    timeout client  1m
+    timeout server  1m
+
+# --- Path-based routing on port 80 ---
+frontend http
+    bind *:80
+    mode http
+    acl is_api path_beg /api
+    use_backend backend_api if is_api
+    default_backend backend_web
+
+backend backend_api
+    mode http
+    server api_backend 192.168.0.11:30008
+
+backend backend_web
+    mode http
+    server web_backend 192.168.0.11:30007
