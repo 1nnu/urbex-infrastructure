@@ -21,8 +21,14 @@ frontend http
 
 backend backend_api
     mode http
-    server api_backend 192.168.0.11:30008
+{% for host in groups['all'] if host.startswith('control-node') or host.startswith('worker-node') %}
+{% set private_ip = hostvars[host]['private_networks'] | map(attribute='ip') | select('match', '^192\\.168\\.0\\.\\d+$') | list | first %}
+    server {{ host }} {{ private_ip }}:{{ k8s_backend_nodeport }}
+{% endfor %}
 
 backend backend_web
     mode http
-    server web_backend 192.168.0.11:30007
+{% for host in groups['all'] if host.startswith('control-node') or host.startswith('worker-node') %}
+{% set private_ip = hostvars[host]['private_networks'] | map(attribute='ip') | select('match', '^192\\.168\\.0\\.\\d+$') | list | first %}
+    server {{ host }} {{ private_ip }}:{{ k8s_frontend_nodeport }}
+{% endfor %}

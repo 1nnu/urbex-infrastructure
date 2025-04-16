@@ -2,3 +2,7 @@
 - name: Print all gathered facts for this host
   debug:
     var: ansible_facts
+
+- name: Show internal IP
+  debug:
+    msg: "Private IP is {{ ansible_facts.all_ipv4_addresses | select('match', '^192\\.168\\.') | list | first }}"
