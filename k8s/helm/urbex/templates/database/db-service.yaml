@@ -6,9 +6,9 @@ metadata:
 spec:
   selector:
     {{- range $key, $value := .Values.database.labels }}
-      {{ $key }}: {{ $value }}
+    {{ $key }}: {{ $value }}
     {{- end }}
   ports:
     - protocol: TCP
-      port: 5432
-      targetPort: 5432
+      port: {{ .Values.database.port }}
+      targetPort: {{ .Values.database.container.port }}
