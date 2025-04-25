@@ -1,0 +1,8 @@
+127.0.0.1 localhost
+
+{% for host in groups['all'] %}
+{% set private_ip = (hostvars[host]['private_networks'] | map(attribute='ip') | select('match', '^192\\.168\\.0\\.\\d+$') | list | first) %}
+{% if private_ip %}
+{{ private_ip }} {{ host }}
+{% endif %}
+{% endfor %}

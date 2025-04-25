@@ -15,7 +15,7 @@
   - name: Store file for worker to join
     ansible.builtin.fetch:
       src: /root/join-command.sh
-      dest: /tmp/join-command.sh/
+      dest: /tmp/join-command.sh
       flat: true
 
 # Allowed hosting of pods on control plane node for development and cost saving
