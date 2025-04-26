@@ -7,6 +7,14 @@
       group: root
       mode: '0700'
 
+  - name: Template kubeadm-config.yaml to control-plane node
+    ansible.builtin.template:
+      src: kubeadm-config.yaml.j2
+      dest: /root/kubeadm-config.yaml
+      owner: root
+      group: root
+      mode: '0700'
+
   - name: Run master.sh on first start
     ansible.builtin.command:
       cmd: bash /root/master.sh

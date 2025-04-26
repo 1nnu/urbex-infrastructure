@@ -84,7 +84,7 @@ echo "-------------Pulling Kueadm Images -------------"
 kubeadm config images pull
 
 echo "-------------Running kubeadm init-------------"
-kubeadm init
+kubeadm init --config=/root/kubeadm-config.yaml --upload-certs
 
 echo "-------------Copying Kubeconfig-------------"
 mkdir -p /root/.kube
