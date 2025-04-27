@@ -46,7 +46,7 @@ database:
     port: 5432
   image:
     repository: postgres
-    tag: latest
+    tag: 17
   name: database
   replicas: 1
   env:
@@ -63,3 +63,6 @@ database:
     port: 5432
   configMap:
     name: postgres-config
+  backup:
+    schedule: "0 2 * * *" # Every day at 2 AM
+    jobName: postgres-backup
