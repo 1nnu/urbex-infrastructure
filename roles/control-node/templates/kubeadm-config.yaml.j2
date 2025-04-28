@@ -2,9 +2,9 @@ apiVersion: kubeadm.k8s.io/v1beta3
 kind: ClusterConfiguration
 apiServer:
   extraArgs:
-    advertise-address: "{{ ansible_all_ipv4_addresses | ansible.utils.ipaddr('private') | first }}"
+    advertise-address: "{{ hostvars[inventory_hostname]['private_networks'] | map(attribute='ip') | select('match', '^192\\.168\\.0\\.\\d+$') | list | first }}"
   certSANs:
-    - "{{ ansible_all_ipv4_addresses | ansible.utils.ipaddr('private') | first }}"
-controlPlaneEndpoint: "{{ ansible_all_ipv4_addresses | ansible.utils.ipaddr('private') | first }}:6443"
+    - "{{ hostvars[inventory_hostname]['private_networks'] | map(attribute='ip') | select('match', '^192\\.168\\.0\\.\\d+$') | list | first }}"
+controlPlaneEndpoint: "{{ hostvars[inventory_hostname]['private_networks'] | map(attribute='ip') | select('match', '^192\\.168\\.0\\.\\d+$') | list | first }}:6443"
 networking:
   podSubnet: "10.244.0.0/16"
