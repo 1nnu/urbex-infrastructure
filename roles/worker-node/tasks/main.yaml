@@ -17,7 +17,7 @@
     ansible.builtin.lineinfile:
       path: /etc/default/kubelet
       regexp: '^KUBELET_EXTRA_ARGS='
-      line: "KUBELET_EXTRA_ARGS=--node-ip={{ ansible_all_ipv4_addresses | ansible.utils.ipaddr('private') | first }}
+      line: "KUBELET_EXTRA_ARGS=--node-ip={{ ansible_all_ipv4_addresses | ansible.utils.ipaddr('private') | first }}"
       create: yes
 
   - name: Restart kubelet
