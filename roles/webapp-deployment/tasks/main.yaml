@@ -15,6 +15,14 @@
       src: "{{ project_root }}/k8s/"
       dest: "/root/k8s"
       mode: '0700'
+  
+  - name: Template values.yaml to control-plane node
+    ansible.builtin.template:
+      src: values.yaml.j2
+      dest: /root/values.yaml
+      owner: root
+      group: root
+      mode: '0700'
 
   - name: Apply Urbex helm chart on the control-plane node
     kubernetes.core.helm:
@@ -22,3 +30,5 @@
       chart_ref: "/root/k8s/helm/urbex"
       release_namespace: urbex
       create_namespace: true
+      values_files:
+      - /root/values.yaml

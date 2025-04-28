@@ -17,7 +17,7 @@ backend:
     name: backend-service
     type: NodePort
     port: 80
-    nodePort: 30008
+    nodePort: {{ k8s_backend_nodeport }}
   configMap:
     name: java-spring-config
 
@@ -31,14 +31,14 @@ frontend:
     tag: latest
   replicas: 2
   env:
-    VITE_API_URL: "http://backend-service:30008"
+    VITE_API_URL: "http://backend-service:{{ k8s_backend_nodeport }}"
   labels:
     app: frontend
   service:
     name: frontend-service
     type: NodePort
     port: 80
-    nodePort: 30007
+    nodePort: {{ k8s_frontend_nodeport }}
 
 database:
   container:
@@ -67,10 +67,10 @@ database:
     image:
       repository: viiin/postgresbackup
       tag: latest
-    schedule: "40 * * * *" # Every day at 2 AM
+    schedule: "0 2 * * *" # Every day at 2 AM
     jobName: postgres-backup
     aws:
-      access_key: PLACEHOLDER
-      secret_key: PLACEHOLDER
+      access_key: {{ lookup('env', 'AWS_ACCESS_KEY_ID') }}
+      secret_key: {{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}
       region: eu-west-1
       s3_bucket: terraform-s3-state-viiin

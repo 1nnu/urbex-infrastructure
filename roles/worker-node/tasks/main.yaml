@@ -34,3 +34,4 @@
   - name: Run join-command.sh to join cluster
     ansible.builtin.command:
       cmd: bash /root/join-command.sh
+      creates: /etc/kubernetes/pki/ca.crt

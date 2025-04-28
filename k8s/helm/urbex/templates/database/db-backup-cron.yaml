@@ -3,28 +3,43 @@ kind: CronJob
 metadata:
   name: {{ .Values.database.backup.jobName }}
 spec:
-  schedule: {{ .Values.database.backup.schedule }} # Every day at 2 AM
+  schedule: "{{ .Values.database.backup.schedule }}" # Every day at 2 AM
   jobTemplate:
     spec:
-      containers:
-      - name: {{ .Values.database.backup.jobName }}
-        image: {{ .Values.database.image.repository}}:{{ .Values.database.image.tag }}
-        command: ["/bin/bash", "-c"]
-        args:
-          - mkdir -p /backup;
-            # Ensure the database is running and accessible
-            until pg_isready -h {{ .Values.database.service.name }} -U {{ .Values.database.env.POSTGRES_USER }}; do
-              echo "Waiting for PostgreSQL to be ready...";
-              sleep 5;
-            done;
-            # Perform the backup
-            echo "Backing up PostgreSQL database...";
-            # Use pg_dump to create a backup of the database
-          - pg_dump -h {{ .Values.database.service.name }} -U {{ .Values.database.env.POSTGRES_USER }} {{ .Values.database.env.POSTGRES_DB }} > /backup/backup.sql;
-            # Upload somewhere, e.g., aws s3 cp /backup/backup.sql s3://your-bucket/
-        env:
-        - name: PGPASSWORD
-          value: {{ .Values.database.env.POSTGRES_PASSWORD }}
-        volumeMounts:
-      restartPolicy: Never
+      template:
+        spec:
+          containers:
+          - name: {{ .Values.database.backup.jobName }}
+            image: {{ .Values.database.backup.image.repository}}:{{ .Values.database.backup.image.tag }}
+            command: ["/bin/bash", "-c"]
+            args:
+              - |
+                set -e
+                export BACKUP_DIR=/backups
+                export DB_NAME={{ .Values.database.env.POSTGRES_DB }}
+                export DB_USER={{ .Values.database.env.POSTGRES_USER }}
+                export DB_HOST={{ .Values.database.service.name }}
+                export DB_PORT={{ .Values.database.port }}
+                
+                mkdir -p $BACKUP_DIR
+                TIMESTAMP=$(date +"%Y%m%d%H%M%S")
+                BACKUP_FILE="$BACKUP_DIR/${DB_NAME}_backup_$TIMESTAMP.sql.gz"
+                
+                pg_dump -h $DB_HOST -p $DB_PORT -U $DB_USER -F c $DB_NAME | gzip > $BACKUP_FILE
+
+                aws s3 cp $BACKUP_FILE s3://{{ .Values.database.backup.aws.s3_bucket }}$BACKUP_FILE
+                
+                echo "Backup created at $BACKUP_FILE"
+            env:
+            - name: PGPASSWORD
+              value: {{ .Values.database.env.POSTGRES_PASSWORD }}
+            - name: AWS_ACCESS_KEY_ID
+              value: {{ .Values.database.backup.aws.access_key }}
+            - name: AWS_SECRET_ACCESS_KEY
+              value: {{ .Values.database.backup.aws.secret_key }}
+            - name: AWS_DEFAULT_REGION
+              value: {{ .Values.database.backup.aws.region }}
+            - name: AWS_S3_BUCKET
+              value: {{ .Values.database.backup.aws.s3_bucket }}
+          restartPolicy: Never
   backoffLimit: 2
