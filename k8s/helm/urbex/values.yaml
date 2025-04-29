@@ -53,6 +53,7 @@ database:
     POSTGRES_DB: devdb
     POSTGRES_USER: devuser
     POSTGRES_PASSWORD: devpassword
+    POSTGRES_REPLICATION_PASSWORD: devpassword
     PGDATA: /var/lib/postgresql/data/pgdata
   labels:
     app: postgres

@@ -1,0 +1,16 @@
+apiVersion: kubegres.reactive-tech.io/v1
+kind: Kubegres
+metadata:
+  name: {{ .Values.database.name }}
+  namespace: {{ .Values.application.namespace }}
+spec:
+   replicas: {{ .Values.database.replicas}}
+   image: {{ .Values.database.image.repository}}:{{ .Values.database.image.tag }}
+   customConfig: "{{ .Values.database.name }}-conf"
+   database:
+      size: 1Gi
+   env:
+      - name: POSTGRES_PASSWORD
+        value: {{ .Values.database.env.POSTGRES_PASSWORD }}
+      - name: POSTGRES_REPLICATION_PASSWORD
+        value: {{ .Values.database.env.POSTGRES_PASSWORD }}

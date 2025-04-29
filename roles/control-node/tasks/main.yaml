@@ -13,7 +13,7 @@
       dest: /root/kubeadm-config.yaml
       owner: root
       group: root
-      mode: '0700'
+      mode: '0600'
 
   - name: Run master.sh on first start
     ansible.builtin.command:
@@ -45,4 +45,9 @@
         spec:
           taints: []
   
+  - name: Create a directory if it does not exist
+    ansible.builtin.file:
+      path: /mnt/disks/vol1
+      state: directory
+      mode: '0755'
 

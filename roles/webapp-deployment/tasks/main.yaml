@@ -13,8 +13,8 @@
   - name: Copy k8s manifests to control-plane node
     ansible.builtin.copy:
       src: "{{ project_root }}/k8s/"
-      dest: "/root/k8s"
-      mode: '0700'
+      dest: /root/k8s
+      mode: '0600'
   
   - name: Template values.yaml to control-plane node
     ansible.builtin.template:
@@ -22,12 +22,23 @@
       dest: /root/values.yaml
       owner: root
       group: root
-      mode: '0700'
+      mode: '0600'
+  
+  - name: Download kubegres manifest to the cluster
+    ansible.builtin.get_url:
+      url: https://raw.githubusercontent.com/reactive-tech/kubegres/v1.19/kubegres.yaml
+      dest: /root/kubegres.yaml
+      mode: '0600'
+
+  - name: Apply kubegres manifest to the cluster
+    kubernetes.core.k8s:
+      state: present
+      src: /root/kubegres.yaml
 
   - name: Apply Urbex helm chart on the control-plane node
     kubernetes.core.helm:
       name: urbex
-      chart_ref: "/root/k8s/helm/urbex"
+      chart_ref: /root/k8s/helm/urbex
       release_namespace: urbex
       create_namespace: true
       values_files:

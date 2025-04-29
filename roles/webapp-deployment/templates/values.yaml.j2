@@ -17,7 +17,7 @@ backend:
     name: backend-service
     type: NodePort
     port: 80
-    nodePort: {{ k8s_backend_nodeport }}
+    nodePort: 30008
   configMap:
     name: java-spring-config
 
@@ -31,14 +31,14 @@ frontend:
     tag: latest
   replicas: 2
   env:
-    VITE_API_URL: "http://backend-service:{{ k8s_backend_nodeport }}"
+    VITE_API_URL: "http://backend-service:30008"
   labels:
     app: frontend
   service:
     name: frontend-service
     type: NodePort
     port: 80
-    nodePort: {{ k8s_frontend_nodeport }}
+    nodePort: 30007
 
 database:
   container:
@@ -53,6 +53,7 @@ database:
     POSTGRES_DB: devdb
     POSTGRES_USER: devuser
     POSTGRES_PASSWORD: devpassword
+    POSTGRES_REPLICATION_PASSWORD: devpassword
     PGDATA: /var/lib/postgresql/data/pgdata
   labels:
     app: postgres
@@ -67,7 +68,7 @@ database:
     image:
       repository: viiin/postgresbackup
       tag: latest
-    schedule: "0 2 * * *" # Every day at 2 AM
+    schedule: "40 * * * *" # Every day at 2 AM
     jobName: postgres-backup
     aws:
       access_key: {{ lookup('env', 'AWS_ACCESS_KEY_ID') }}
