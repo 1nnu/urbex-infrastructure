@@ -45,13 +45,13 @@ database:
     name: postgres
     port: 5432
   image:
-    repository: postgres
-    tag: 17
+    repository: viiin/postgres-aws
+    tag: latest
   name: database
   replicas: 1
   env:
     POSTGRES_DB: devdb
-    POSTGRES_USER: devuser
+    POSTGRES_USER: postgres
     POSTGRES_PASSWORD: devpassword
     POSTGRES_REPLICATION_PASSWORD: devpassword
     PGDATA: /var/lib/postgresql/data/pgdata
@@ -68,7 +68,7 @@ database:
     image:
       repository: viiin/postgresbackup
       tag: latest
-    schedule: "40 * * * *" # Every day at 2 AM
+    schedule: "0 2 * * *" # Every day at 2 AM
     jobName: postgres-backup
     aws:
       access_key: {{ lookup('env', 'AWS_ACCESS_KEY_ID') }}

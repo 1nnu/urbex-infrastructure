@@ -68,7 +68,7 @@ database:
     image:
       repository: viiin/postgresbackup
       tag: latest
-    schedule: "40 * * * *" # Every day at 2 AM
+    schedule: "0 2 * * *" # Every day at 2 AM
     jobName: postgres-backup
     aws:
       access_key: PLACEHOLDER

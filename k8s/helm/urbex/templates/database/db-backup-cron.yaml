@@ -18,7 +18,7 @@ spec:
                 export BACKUP_DIR=/backups
                 export DB_NAME={{ .Values.database.env.POSTGRES_DB }}
                 export DB_USER={{ .Values.database.env.POSTGRES_USER }}
-                export DB_HOST={{ .Values.database.service.name }}
+                export DB_HOST={{ .Values.database.name }}
                 export DB_PORT={{ .Values.database.port }}
                 
                 mkdir -p $BACKUP_DIR

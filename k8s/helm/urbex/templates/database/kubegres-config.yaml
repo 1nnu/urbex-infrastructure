@@ -8,25 +8,37 @@ data:
     #!/bin/bash
     set -e
 
-    dt=$(date '+%d/%m/%Y %H:%M:%S');
-    echo "$dt - Running init script the 1st time Primary PostgreSql container is created...";
+    dt=$(date '+%d/%m/%Y %H:%M:%S')
+    echo "$dt - Running init script the 1st time Primary PostgreSql container is created..."
 
-    customDatabaseName="{{ .Values.database.env.POSTGRES_DB }}"
-    customUserName="{{ .Values.database.env.POSTGRES_USER }}"
-    customUserPassword="{{ .Values.database.env.POSTGRES_PASSWORD }}"
+    # Environment setup
+    export DB_NAME="{{ .Values.database.env.POSTGRES_DB }}"
+    export DB_USER="{{ .Values.database.env.POSTGRES_USER }}"
+    export DB_PASSWORD="{{ .Values.database.env.POSTGRES_PASSWORD }}"
+    export AWS_ACCESS_KEY_ID="{{ .Values.database.backup.aws.access_key }}"
+    export AWS_SECRET_ACCESS_KEY="{{ .Values.database.backup.aws.secret_key }}"
+    export AWS_DEFAULT_REGION="{{ .Values.database.backup.aws.region }}"
+    export AWS_S3_BUCKET="{{ .Values.database.backup.aws.s3_bucket }}"
+    export BACKUP_DIR="/tmp/pg-backup"
 
-    echo "$dt - Using Helm templated values:"
-    echo "  POSTGRES_DB=$customDatabaseName"
-    echo "  POSTGRES_USER=$customUserName"
-    echo "  POSTGRES_PASSWORD=$customUserPassword"
+    mkdir -p "$BACKUP_DIR"
+    cd "$BACKUP_DIR"
 
-    echo "$dt - Running: psql -v ON_ERROR_STOP=1 --username $POSTGRES_USER --dbname $POSTGRES_DB ...";
+    echo "$dt - Fetching latest backup from S3..."
+    LATEST_BACKUP=$(aws s3 ls "s3://$AWS_S3_BUCKET/backups/" | sort | tail -n 1 | awk '{print $4}')
 
-    psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
-    CREATE USER $customUserName WITH PASSWORD '$customUserPassword';
-    CREATE DATABASE $customDatabaseName;
-    \connect $customDatabaseName;
-    GRANT ALL ON SCHEMA public TO $customUserName;
-    EOSQL
+    if [ -z "$LATEST_BACKUP" ]; then
+      echo "$dt - No backup found in S3. Skipping restore."
+    else
+      echo "$dt - Found backup: $LATEST_BACKUP"
+      aws s3 cp "s3://$AWS_S3_BUCKET/backups/$LATEST_BACKUP" "$LATEST_BACKUP"
 
-    echo "$dt - Init script is completed";
+      echo "$dt - Creating database if it does not exist..."
+      psql -U postgres -tc "SELECT 1 FROM pg_database WHERE datname = '$DB_NAME'" | grep -q 1 || \
+        psql -U postgres -c "CREATE DATABASE $DB_NAME OWNER $DB_USER;"
+
+      echo "$dt - Restoring backup..."
+      gunzip -c "$LATEST_BACKUP" | pg_restore -U "$DB_USER" -d "$DB_NAME" --no-owner --clean
+
+      echo "$dt - Restore complete."
+    fi
