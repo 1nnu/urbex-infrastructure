@@ -1,4 +1,4 @@
 plugin: hetzner.hcloud.hcloud
-api_token: "{{ api_token }}"
+api_token: "{{ hetzner_api_token }}"
 keyed_groups:
   - key: labels

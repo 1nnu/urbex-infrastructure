@@ -1,7 +1,6 @@
 # Deployment characteristics
 environment: "{{ lookup('env', 'DEPLOYMENT_TYPE') | default('dev', true) }}"
 
-
 # Kubernetes prerequisites
 containerd_version: 2.0.4
 containerd_github_url: https://github.com/containerd/containerd/releases/download/v{{containerd_version}}/containerd-{{containerd_version}}-linux-amd64.tar.gz
