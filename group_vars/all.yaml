@@ -1,5 +1,4 @@
 # Deployment characteristics
-environment: "{{ lookup('env', 'DEPLOYMENT_TYPE') | default('dev', true) }}"
 
 # Kubernetes prerequisites
 containerd_version: 2.0.4

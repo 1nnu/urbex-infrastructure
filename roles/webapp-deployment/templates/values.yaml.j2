@@ -73,5 +73,5 @@ database:
     aws:
       access_key: {{ lookup('env', 'AWS_ACCESS_KEY_ID') }}
       secret_key: {{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}
-      region: eu-west-1
-      s3_bucket: terraform-s3-state-viiin
+      region: {{ lookup('env', 'AWS_REGION') | default('eu-west-1', true) }}
+      s3_bucket: {{ lookup('env', 'S3_BUCKET') | default('terraform-s3-state-viiin', true) }}
