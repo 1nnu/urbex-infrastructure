@@ -8,6 +8,13 @@
       when: debug | default(false) | bool
   tags: debug
 
+- name: Dns update
+  hosts: 127.0.0.1
+  connection: local
+  become: false
+  roles:
+    - zone-dns
+  tags: dns
   
 - name: Initial setup
   hosts: all

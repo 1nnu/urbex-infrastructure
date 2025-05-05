@@ -1,12 +1,82 @@
----
+- name: Install certbot dependencies
+  ansible.builtin.apt:
+    name:
+      - python3
+      - python3-venv
+      - libaugeas0
+    state: present
+
+- name: Ensure /opt directory exists
+  ansible.builtin.file:
+    path: /opt/certbot
+    state: directory
+    mode: '0755'
+
+- name: Create certbot virtual environment
+  ansible.builtin.command:
+    cmd: python3 -m venv /opt/certbot/
+    creates: /opt/certbot/bin/activate
+
+- name: Upgrade pip in certbot virtual environment
+  ansible.builtin.pip:
+    name: pip
+    virtualenv: /opt/certbot/
+    state: latest
+
+- name: Install certbot in virtual environment
+  ansible.builtin.pip:
+    name: certbot
+    virtualenv: /opt/certbot/
+
+- name: Link certbot to /usr/bin
+  ansible.builtin.file:
+    src: /opt/certbot/bin/certbot
+    dest: /usr/bin/certbot
+    state: link
+    force: true
+
 - name: Install HAProxy
-  apt:
+  ansible.builtin.apt:
     name: haproxy
     state: present
     update_cache: true
 
 - name: Generate HAProxy config
-  template:
+  ansible.builtin.template:
     src: haproxy.cfg.j2
     dest: /etc/haproxy/haproxy.cfg
   notify: Restart haproxy
+
+- name: Check if certificate already exists
+  ansible.builtin.stat:
+    path: /etc/letsencrypt/live/{{ certbot_domain }}/fullchain.pem
+  register: certbot_cert
+
+- name: Stop HAProxy temporarily for Certbot
+  ansible.builtin.service:
+    name: haproxy
+    state: stopped
+  when: not certbot_cert.stat.exists
+
+- name: Run certbot command
+  ansible.builtin.command:
+    cmd: certbot certonly --standalone --non-interactive --agree-tos --email {{ certbot_email }} -d {{ certbot_domain }}
+  when: not certbot_cert.stat.exists
+
+- name: Check if haproxy.pem already exists
+  ansible.builtin.stat:
+    path: /etc/letsencrypt/live/{{ certbot_domain }}/haproxy.pem
+  register: haproxy_pem
+
+- name: Combine fullchain and privkey into haproxy.pem
+  ansible.builtin.command:
+    cmd: >
+      bash -c "cat /etc/letsencrypt/live/{{ certbot_domain }}/fullchain.pem
+      /etc/letsencrypt/live/{{ certbot_domain }}/privkey.pem
+      > /etc/letsencrypt/live/{{ certbot_domain }}/haproxy.pem"
+  when: not haproxy_pem.stat.exists
+
+- name: Start HAProxy
+  ansible.builtin.service:
+    name: haproxy
+    state: started

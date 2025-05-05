@@ -25,4 +25,6 @@ kubernetes_gpg_key: https://pkgs.k8s.io/core:/stable:/v1.32/deb/Release.key
 k8s_frontend_nodeport: 30007
 k8s_backend_nodeport: 30008
 
-# Helm chart specs
+# Certbot
+certbot_email: innar.viinamae@gmail.com
+certbot_domain: mahajaetud.ee

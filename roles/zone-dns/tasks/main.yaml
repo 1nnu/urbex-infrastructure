@@ -1,0 +1,4 @@
+---
+  - name: Run python script to update dns records
+    ansible.builtin.command:
+      cmd: python3 ./zone_api/update_a_records.py
